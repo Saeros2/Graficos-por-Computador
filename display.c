@@ -103,9 +103,7 @@ void display(void) {
 
         /* Draw the object; for each face create a new polygon with the corresponding vertices */
         //glLoadIdentity();
-        printf("antes de load\n");
         glLoadMatrixf(aux_obj->list_matrix->m);
-        printf("despues de load\n");
         for (f = 0; f < aux_obj->num_faces; f++) {
             glBegin(GL_POLYGON);
             for (v = 0; v < aux_obj->face_table[f].num_vertices; v++) {

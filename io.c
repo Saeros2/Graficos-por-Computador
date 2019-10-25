@@ -14,7 +14,8 @@ extern GLdouble _ortho_z_min,_ortho_z_max;
 #define ANGULO 18.0
 
 bool traslacion, rotacion, escalado;
-float rot_angle_x, rot_angle_y, tras_x, tras_y, esc_x, esc_y;
+bool isLeftKeyPressed, isRightKeyPressed, isUpKeyPressed, isDownKeyPressed;
+float esc_x, esc_y;
 int contm, conte, contr;
 
 /**
@@ -68,6 +69,7 @@ void keyboard(unsigned char key, int x, int y) {
     object3d *auxiliar_object = 0;
     GLdouble wd,he,midx,midy;
 
+    list_matrix *aux_list;
     list_matrix *newptr;
 
 
@@ -77,6 +79,7 @@ void keyboard(unsigned char key, int x, int y) {
         /*Ask for file*/
         printf("%s", KG_MSSG_SELECT_FILE);
         scanf("%s", fname);
+        glLoadIdentity();
         /*Allocate memory for the structure and read the file*/
         auxiliar_object = (object3d *) malloc(sizeof (object3d));
         read = read_wavefront(fname, auxiliar_object);
@@ -94,6 +97,12 @@ void keyboard(unsigned char key, int x, int y) {
         /*Read OK*/
         case 0:
             /*Insert the new object in the list*/
+            aux_list = (list_matrix *)malloc(sizeof(list_matrix));
+            glLoadIdentity();
+            glGetFloatv(GL_MODELVIEW_MATRIX, aux_list->m);
+            aux_list->nextptr = 0;
+            auxiliar_object->list_matrix = aux_list;
+
             auxiliar_object->next = _first_object;
             _first_object = auxiliar_object;
             _selected_object = _first_object;
@@ -137,7 +146,7 @@ void keyboard(unsigned char key, int x, int y) {
         break;
 
     case '-':
-        if (glutGetModifiers() == GLUT_ACTIVE_CTRL){            newptr->nextptr = _selected_object->list_matrix;
+        if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
 
             /*Increase the projection plane; compute the new dimensions*/
             wd=(_ortho_x_max-_ortho_x_min)/KG_STEP_ZOOM;
@@ -211,20 +220,6 @@ void keyboard(unsigned char key, int x, int y) {
         break;
 
 
-    case GLUT_KEY_UP:
-        printf("up\n");
-        tras_y++;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(tras_x, tras_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
-        break;
-
     case '?':
         print_help();
         break;
@@ -241,3 +236,120 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void SpecialInput(int key, int x, int y)
+{
+    list_matrix *newptr;
+    float tras_x, tras_y, rot_angle_x, rot_angle_y;
+switch(key)
+{
+case GLUT_KEY_UP:
+    if (traslacion){
+        tras_y++;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(tras_x, tras_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+        }
+    if (rotacion){
+        rot_angle_x++;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+
+        
+        break;
+case GLUT_KEY_DOWN:
+    if (traslacion){
+        tras_y--;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(tras_x, tras_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+    if (rotacion){
+        rot_angle_x--;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+
+break;
+case GLUT_KEY_LEFT:
+    if (traslacion){
+        tras_x--;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(tras_x, tras_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+    if (rotacion){
+        rot_angle_y--;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+break;
+case GLUT_KEY_RIGHT:
+    if (traslacion){
+        tras_x++;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(tras_x, tras_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+    if (rotacion){
+        rot_angle_y++;
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
+        glMultMatrixf(_selected_object->list_matrix->m);
+        newptr = malloc(sizeof(list_matrix));
+        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+        newptr->nextptr = _selected_object->list_matrix;
+        _selected_object->list_matrix = newptr;
+        glutPostRedisplay();
+    }
+break;
+}
+
+glutPostRedisplay();
+}

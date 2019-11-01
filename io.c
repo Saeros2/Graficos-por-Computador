@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+//comenzar programa con alguna transformacion activa
+//si se activa una, se desactiva otra
+
 extern object3d * _first_object;
 extern object3d * _selected_object;
 
@@ -14,9 +17,8 @@ extern GLdouble _ortho_z_min,_ortho_z_max;
 #define ANGULO 18.0
 
 bool traslacion, rotacion, escalado;
-bool isLeftKeyPressed, isRightKeyPressed, isUpKeyPressed, isDownKeyPressed;
-float esc_x, esc_y;
 int contm, conte, contr;
+list_matrix *newptr;
 
 /**
  * @brief This function just prints information about the use
@@ -34,10 +36,50 @@ void print_help(){
     printf("<DEL>\t\t Hautatutako objektua ezabatu\n");
     printf("<CTRL + ->\t Bistaratze-eremua handitu\n");
     printf("<CTRL + +>\t Bistaratze-eremua txikitu\n");
-    printf("<M/m>\t\t Activar/Desactivar traslacion\n");
-    printf("<B/b>\t\t Activar/Desactivar rotacion\n");
-    printf("<T/t>\t\t Activar/Desactivar rotacion\n");
+    printf("<M/m>\t\t Activar traslacion\n");
+    printf("<B/b>\t\t Activar rotacion\n");
+    printf("<T/t>\t\t Activar rotacion\n");
+    printf("¡¡¡TRASLACION ACTIVADA POR DEFECTO!!!\n");
     printf("\n\n");
+}
+
+
+void traslation(float x, float y){
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(x, y, 0.0);
+    glMultMatrixf(_selected_object->list_matrix->m);
+    newptr = malloc(sizeof(list_matrix));
+    glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+    newptr->nextptr = _selected_object->list_matrix;
+    _selected_object->list_matrix = newptr;
+    glutPostRedisplay();
+}
+
+void rotation(GLfloat x, GLfloat y){
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glRotatef(ANGULO, x, y, 0.0);
+    glMultMatrixf(_selected_object->list_matrix->m);
+    newptr = malloc(sizeof(list_matrix));
+    glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+    newptr->nextptr = _selected_object->list_matrix;
+    _selected_object->list_matrix = newptr;
+    glutPostRedisplay();
+}
+
+void scalation(float x, float y){
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glScalef(x, y, 1.0);
+    glMultMatrixf(_selected_object->list_matrix->m);
+    newptr = malloc(sizeof(list_matrix));
+    glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
+    newptr->nextptr = _selected_object->list_matrix;
+    _selected_object->list_matrix = newptr;
+    glutPostRedisplay();
 }
 
 void free_ptr(object3d *object){
@@ -70,13 +112,13 @@ void keyboard(unsigned char key, int x, int y) {
     GLdouble wd,he,midx,midy;
 
     list_matrix *aux_list;
-    list_matrix *newptr;
 
 
     switch (key) {
     case 'f':
     case 'F':
         /*Ask for file*/
+        traslacion = true;
         printf("%s", KG_MSSG_SELECT_FILE);
         scanf("%s", fname);
         glLoadIdentity();
@@ -181,26 +223,31 @@ void keyboard(unsigned char key, int x, int y) {
 
     case 'm':
     case 'M':
+        contm++;
         if (contm % 2 == 0){
-            contm++;
             traslacion = true;
-            printf("Activada la traslacion\n");
-        }
-        else{
-            contm++;
-            traslacion = false; 
+            rotacion = false;
+            escalado = false;
+            printf("Activada la traslacion. Desactivadas el resto\n");
+            contr = 0;
+            conte = 0;
+        }else{
             printf("Desactivada la traslacion\n");
+            traslacion = false;
         }
         break;
 
     case 'b':
     case 'B':
-        if (contr % 2 == 0){
-            contr++;
-            printf("Activada la rotacion\n");
+        contr++;
+        if (contr % 2 != 0){
+            printf("Activada la rotacion. Desactivadas el resto\n");
+            contm = 1;
+            conte = 0;
             rotacion = true;
+            traslacion = false;
+            escalado = false;
         } else {
-            contr++;
             printf("Desactivada la rotacion\n");
             rotacion = false;
         }
@@ -208,12 +255,15 @@ void keyboard(unsigned char key, int x, int y) {
 
     case 't':
     case 'T':
-        if (conte % 2 == 0){
-            conte++;
-            printf("Activado el escalado\n");
+        conte++;
+        if (conte % 2 != 0){
+            printf("Activado el escalado. Desactivadas el resto\n");
+            contm = 1;
+            contr = 0;
             escalado = true;
+            rotacion = false;
+            traslacion = false;
         } else {
-            conte++;
             printf("Desactivado el escalado\n");
             escalado = false;
         }
@@ -238,116 +288,70 @@ void keyboard(unsigned char key, int x, int y) {
 
 void SpecialInput(int key, int x, int y)
 {
-    list_matrix *newptr;
-    float tras_x, tras_y, rot_angle_x, rot_angle_y;
+float tras_x, tras_y;
+GLfloat rot_angle_x, rot_angle_y, esc_x, esc_y;
+rot_angle_x = 0.0;
+rot_angle_y = 0.0;
+esc_x = 1.0;
+esc_y = 1.0;
 switch(key)
 {
 case GLUT_KEY_UP:
     if (traslacion){
         tras_y++;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(tras_x, tras_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
-        }
-    if (rotacion){
+        traslation(tras_x, tras_y);
+    } else if (rotacion){
         rot_angle_x++;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        rotation(rot_angle_x, rot_angle_y);
+    }else if (escalado){
+        esc_y += 0.1;
+        scalation(esc_x, esc_y);
     }
+break;
 
-        
-        break;
 case GLUT_KEY_DOWN:
     if (traslacion){
         tras_y--;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(tras_x, tras_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
-    }
-    if (rotacion){
+        traslation(tras_x, tras_y);
+    } else if (rotacion){
         rot_angle_x--;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        rotation(rot_angle_x, rot_angle_y);
+    } else if (escalado){
+        esc_y -= 0.1;
+        scalation(esc_x, esc_y);
     }
-
 break;
+
 case GLUT_KEY_LEFT:
     if (traslacion){
         tras_x--;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(tras_x, tras_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        traslation(tras_x, tras_y);
     }
-    if (rotacion){
+    else if (rotacion){
         rot_angle_y--;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        rotation(rot_angle_x, rot_angle_y);
     }
+    else if (escalado){
+        esc_x -= 0.1;
+        scalation(esc_x, esc_y);
+    }
+
 break;
+
 case GLUT_KEY_RIGHT:
     if (traslacion){
         tras_x++;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(tras_x, tras_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        traslation(tras_x, tras_y);
     }
-    if (rotacion){
+    else if (rotacion){
         rot_angle_y++;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef(ANGULO, rot_angle_x, rot_angle_y, 0.0);
-        glMultMatrixf(_selected_object->list_matrix->m);
-        newptr = malloc(sizeof(list_matrix));
-        glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
-        newptr->nextptr = _selected_object->list_matrix;
-        _selected_object->list_matrix = newptr;
-        glutPostRedisplay();
+        rotation(rot_angle_x, rot_angle_y);
     }
+    else if (escalado){
+        esc_x += 0.1;
+        scalation(esc_x, esc_y);
+    }
+
 break;
 }
 

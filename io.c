@@ -59,7 +59,6 @@ void traslation(float x, float y, float z){
 
 void global_traslation(float x, float y, float z){
 
-    
 }
 
 void rotation(GLfloat x, GLfloat y, GLfloat z){
@@ -297,11 +296,11 @@ switch(key)
 {
 case GLUT_KEY_UP:
     if (traslacion){
-        traslation(0.0, 1.0, 0.0);
+        traslation(0.0f, 1.0f, 0.0f);
     } else if (rotacion){
-        rotation(1.0, 0.0, 0.0);
+        rotation(1.0f, 0.0f, 0.0f);
     }else if (escalado){
-        scalation(1.0, 2.0, 1.0);
+        scalation(1.0f, 2.0f, 1.0f);
     }
 break;
 
@@ -317,51 +316,51 @@ break;
 
 case GLUT_KEY_LEFT:
     if (traslacion){
-        traslation(-1.0, 0.0, 0.0);
+        traslation(-1.0f, 0.0f, 0.0f);
     }
     else if (rotacion){
-        rotation(0.0, -1.0, 0.0);
+        rotation(0.0f, -1.0f, 0.0f);
     }
     else if (escalado){
-        scalation(0.5, 1.0, 1.0);
+        scalation(0.5f, 1.0f, 1.0f);
     }
 
 break;
 
 case GLUT_KEY_RIGHT:
     if (traslacion){
-        traslation(1.0, 0.0, 0.0);
+        traslation(1.0f, 0.0f, 0.0f);
     }
     else if (rotacion){
-        rotation(0.0, 1.0, 0.0);
+        rotation(0.0f, 1.0f, 0.0f);
     }
     else if (escalado){
-        scalation(2.0, 1.0, 1.0);
+        scalation(2.0f, 1.0f, 1.0f);
     }
 
 break;
 
 case GLUT_KEY_PAGE_UP: //tecla Re Pág
     if (traslacion){
-        traslation(0.0, 0.0, -1.0);
+        traslation(0.0f, 0.0f, -1.0f);
     }
     if (rotacion){
-        rotation(0.0, 0.0, -1.0);
+        rotation(0.0f, 0.0f, -1.0f);
     }
     if (escalado){
-        scalation(1.0, 1.0, 0.5); //corregir el escalado
+        scalation(1.0f, 1.0f, 0.5f); //corregir el escalado
     }
 break;
 
 case GLUT_KEY_PAGE_DOWN: //tecla Av Pág
     if (traslacion){
-        traslation(0.0, 0.0, 1.0);
+        traslation(0.0f, 0.0f, 1.0f);
     }
     if (rotacion){
-        rotation(0.0, 0.0, 1.0);
+        rotation(0.0f, 0.0f, 1.0f);
     }
     if (escalado){
-        scalation(1.0, 1.0, 2.0); //corregir el escalado
+        scalation(1.0f, 1.0f, 2.0f); //corregir el escalado
     }
 break;
 }

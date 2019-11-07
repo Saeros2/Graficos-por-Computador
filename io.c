@@ -44,11 +44,11 @@ void print_help(){
 }
 
 
-void traslation(float x, float y){
+void traslation(float x, float y, float z){
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(x, y, 0.0);
+    glTranslatef(x, y, z);
     glMultMatrixf(_selected_object->list_matrix->m);
     newptr = malloc(sizeof(list_matrix));
     glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
@@ -57,10 +57,15 @@ void traslation(float x, float y){
     glutPostRedisplay();
 }
 
-void rotation(GLfloat x, GLfloat y){
+void global_traslation(float x, float y, float z){
+
+    
+}
+
+void rotation(GLfloat x, GLfloat y, GLfloat z){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(ANGULO, x, y, 0.0);
+    glRotatef(ANGULO, x, y, z);
     glMultMatrixf(_selected_object->list_matrix->m);
     newptr = malloc(sizeof(list_matrix));
     glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
@@ -69,11 +74,11 @@ void rotation(GLfloat x, GLfloat y){
     glutPostRedisplay();
 }
 
-void scalation(float x, float y){
+void scalation(float x, float y, float z){
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glScalef(x, y, 1.0);
+    glScalef(x, y, z);
     glMultMatrixf(_selected_object->list_matrix->m);
     newptr = malloc(sizeof(list_matrix));
     glGetFloatv(GL_MODELVIEW_MATRIX, newptr->m);
@@ -288,70 +293,76 @@ void keyboard(unsigned char key, int x, int y) {
 
 void SpecialInput(int key, int x, int y)
 {
-float tras_x, tras_y;
-GLfloat rot_angle_x, rot_angle_y, esc_x, esc_y;
-rot_angle_x = 0.0;
-rot_angle_y = 0.0;
-esc_x = 1.0;
-esc_y = 1.0;
 switch(key)
 {
 case GLUT_KEY_UP:
     if (traslacion){
-        tras_y++;
-        traslation(tras_x, tras_y);
+        traslation(0.0, 1.0, 0.0);
     } else if (rotacion){
-        rot_angle_x++;
-        rotation(rot_angle_x, rot_angle_y);
+        rotation(1.0, 0.0, 0.0);
     }else if (escalado){
-        esc_y += 0.1;
-        scalation(esc_x, esc_y);
+        scalation(1.0, 2.0, 1.0);
     }
 break;
 
 case GLUT_KEY_DOWN:
     if (traslacion){
-        tras_y--;
-        traslation(tras_x, tras_y);
+        traslation(0.0f, -1.0f, 0.0f);
     } else if (rotacion){
-        rot_angle_x--;
-        rotation(rot_angle_x, rot_angle_y);
+        rotation(-1.0f, 0.0f, 0.0f);
     } else if (escalado){
-        esc_y -= 0.1;
-        scalation(esc_x, esc_y);
+        scalation(1.0f, 0.5f, 1.0f);
     }
 break;
 
 case GLUT_KEY_LEFT:
     if (traslacion){
-        tras_x--;
-        traslation(tras_x, tras_y);
+        traslation(-1.0, 0.0, 0.0);
     }
     else if (rotacion){
-        rot_angle_y--;
-        rotation(rot_angle_x, rot_angle_y);
+        rotation(0.0, -1.0, 0.0);
     }
     else if (escalado){
-        esc_x -= 0.1;
-        scalation(esc_x, esc_y);
+        scalation(0.5, 1.0, 1.0);
     }
 
 break;
 
 case GLUT_KEY_RIGHT:
     if (traslacion){
-        tras_x++;
-        traslation(tras_x, tras_y);
+        traslation(1.0, 0.0, 0.0);
     }
     else if (rotacion){
-        rot_angle_y++;
-        rotation(rot_angle_x, rot_angle_y);
+        rotation(0.0, 1.0, 0.0);
     }
     else if (escalado){
-        esc_x += 0.1;
-        scalation(esc_x, esc_y);
+        scalation(2.0, 1.0, 1.0);
     }
 
+break;
+
+case GLUT_KEY_PAGE_UP: //tecla Re Pág
+    if (traslacion){
+        traslation(0.0, 0.0, -1.0);
+    }
+    if (rotacion){
+        rotation(0.0, 0.0, -1.0);
+    }
+    if (escalado){
+        scalation(1.0, 1.0, 0.5); //corregir el escalado
+    }
+break;
+
+case GLUT_KEY_PAGE_DOWN: //tecla Av Pág
+    if (traslacion){
+        traslation(0.0, 0.0, 1.0);
+    }
+    if (rotacion){
+        rotation(0.0, 0.0, 1.0);
+    }
+    if (escalado){
+        scalation(1.0, 1.0, 2.0); //corregir el escalado
+    }
 break;
 }
 

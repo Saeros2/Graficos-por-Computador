@@ -1,5 +1,6 @@
 # Graficos-por-Computador
 FUNCIONES PRINCIPALES
+
 ?	Visualizar la ayuda
 ESC	Finalizar la ejecución de la aplicación
 F,f	Carga de objeto desde un fichero *.obj
@@ -21,8 +22,11 @@ Elemento a transformar (en todo momento se debe estar en algun modo. Son excluye
 O,o	Aplicar transformaciones al objeto seleccionado (valor por defecto) (desactiva cámara y luz)
 K,k	Aplicar transformaciones a la cámara actual (desactiva objeto y luz)
 A,a	Aplicar transformaciones a la luz selecionada (desactiva objeto y camara)
-UP	Trasladar +Y; Escalar + Y; Rotar +X
-DOWN	Trasladar -Y; Escalar - Y; Rotar -X
+
+UP	
+Trasladar +Y; Escalar + Y; Rotar +X
+DOWN	
+Trasladar -Y; Escalar - Y; Rotar -X
 RIGHT	Trasladar +X; Escalar + X; Rotar +Y
 LEFT	Trasladar -X; Escalar - X; Rotar -Y
 AVPAG	Trasladar +Z; Escalar + Z; Rotar +Z

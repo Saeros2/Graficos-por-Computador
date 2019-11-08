@@ -67,6 +67,7 @@ void global_traslation(float x, float y, float z){
     newptr->nextptr = _selected_object->list_matrix;
     _selected_object->list_matrix = newptr;
     glutPostRedisplay();
+    
 }
 
 void rotation(GLfloat x, GLfloat y, GLfloat z){
@@ -410,6 +411,7 @@ case GLUT_KEY_LEFT:
             global_scalation(0.5f, 1.0f, 1.0f);
     }
 
+
 break;
 
 case GLUT_KEY_RIGHT:
@@ -427,7 +429,6 @@ case GLUT_KEY_RIGHT:
             global_rotation(0.0f, 1.0f, 0.0f);
         else if (escalado)
             global_scalation(2.0f, 1.0f, 1.0f);
-
     }
 
 break;

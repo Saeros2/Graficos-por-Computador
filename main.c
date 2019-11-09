@@ -6,6 +6,9 @@
 #include "io.h"
 #include "definitions.h"
 
+extern void SpecialInput(int key, int x, int y);
+
+
 /** GLOBAL VARIABLES **/
 
 GLdouble _window_ratio;                     /*Control of window's proportions */
@@ -35,6 +38,7 @@ void initialization (){
     /*Definition of the method to draw the objects*/
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
+
 
 
 /** MAIN FUNCTION **/

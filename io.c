@@ -345,6 +345,12 @@ void keyboard(unsigned char key, int x, int y) {
     case 27: /* <ESC> */
         exit(0);
         break;
+    case 26: /*<Control z>*/
+        if (_selected_object->list_matrix->nextptr !=0){
+
+        	_selected_object->list_matrix = _selected_object->list_matrix->nextptr;
+        }
+        break;
 
     default:
         /*In the default case we just print the code of the key. This is usefull to define new cases*/
